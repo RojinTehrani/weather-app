@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: 'Kharazmi';
+    src: url('assets/fonts/IRAN\ Kharazmi.ttf') format('truetype');
+
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* @font-face {
+    font-family: 'estedad';
+    src: url('assets/fonts/Estedad-Medium.ttf') format('truetype');
+
+    font-weight: normal;
+    font-style: normal;
+} */
+
+@font-face {
+    font-family: 'estedad';
+    src: url('assets/fonts/Estedad-ExtraBold.ttf') format('truetype');
+
+    font-weight: bold;
+    font-style: normal;
+}
+
+* {
+    font-family: 'estedad';
+    text-align: right;
+    direction: rtl;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+* {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
