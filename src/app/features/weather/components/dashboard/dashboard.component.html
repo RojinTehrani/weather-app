@@ -1,0 +1,360 @@
+<div class="min-h-screen bg-base-100 transition-theme duration-300">
+    <div class="sticky top-4 mb-3 z-50 px-4">
+        <app-nav></app-nav>
+    </div>
+
+
+    <div class="min-h-screen bg-base-100 p-2 sm:p-4 transition-theme duration-300 overflow-x-hidden">
+        <div class="mb-6 mt-4 sm:mt-6 px-2 sm:px-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-1 h-8 bg-gradient-to-b from-primary to-accent rounded-full"></div>
+                        <h1
+                            class="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+                            داشبورد تحلیلی
+                        </h1>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <p class="text-base-content/70 text-xs sm:text-sm">خلاصه وضعیت عملکرد و آمار لحظه‌ای آب و هوا</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-2 p-4 gap-7 flex justify-between items-center">
+            <div class="relative w-full">
+                <div class="relative group">
+                    <div
+                        class="absolute -inset-0.5 bg-gradient-to-r from-primary via-accent to-primary rounded-2xl blur opacity-0 group-focus-within:opacity-75 transition duration-500">
+                    </div>
+
+                    <div
+                        class="relative bg-base-200/80 backdrop-blur-xl rounded-2xl border border-base-300 group-focus-within:border-transparent transition-all duration-300 overflow-hidden">
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2">
+                            <svg class="w-5 h-5 text-base-content/50 group-focus-within:text-primary group-focus-within:scale-110 transition-all duration-300"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+                            (focus)="searchFocused = true; onSearchChange()" placeholder="جستجوی شهر..."
+                            class="w-full bg-transparent py-4 pr-5 pl-12 text-base-content placeholder:text-base-content/50 text-base focus:outline-none">
+                    </div>
+                </div>
+
+                @if (searchTerm.length >= 3 && searchFocused && !isLoading) {
+                <div class="absolute top-full left-0 right-0 mt-3 bg-base-200/95 backdrop-blur-xl rounded-2xl border border-base-300 shadow-2xl z-50"
+                    style="max-height: 400px; overflow-y: auto; overflow-x: hidden;">
+
+                    @if (isSearching) {
+                    <div class="px-5 py-8 flex flex-col items-center justify-center gap-3">
+                        <div class="loading loading-spinner loading-md text-primary"></div>
+                        <span class="text-base-content/70 text-sm font-medium">در حال جستجوی شهرها...</span>
+                    </div>
+
+                    } @else if (results.length === 0) {
+                    <div class="px-6 py-8 text-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5">
+                        </div>
+
+                        <h4 class="text-lg font-bold text-base-content mb-1">نتیجه‌ای یافت نشد!</h4>
+                        <p class="text-base-content/50 text-sm">
+                            برای "{{ searchTerm }}" نتیجه‌ای وجود ندارد
+                        </p>
+                    </div>
+
+                    } @else {
+                    @for (city of results; track city.id) {
+                    <div (click)="selectCity(city)"
+                        class="px-5 py-4 hover:bg-primary/10 cursor-pointer transition-all duration-200 border-b border-base-300 last:border-0 group">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
+                                    <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                        </path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div
+                                        class="font-medium text-base-content group-hover:text-primary transition-colors break-words">
+                                        {{ city.name }}</div>
+                                    <div class="text-xs text-base-content/50">{{ city.country }}</div>
+                                </div>
+                            </div>
+                            <svg class="w-4 h-4 text-base-content/40 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                    }
+                    }
+                </div>
+                }
+            </div>
+
+            <button
+                class="bg-gradient-to-r from-primary to-accent p-3 rounded-2xl hover:scale-105 transition-all duration-300 shadow-lg shadow-primary/20">
+                <svg class="w-6 h-6 text-white mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 px-2 sm:px-4 mb-4 overflow-x-hidden">
+            <div
+                class="lg:col-span-2 bg-base-200/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-primary/20 transition-theme duration-300 overflow-x-hidden w-full">
+                @if (weatherLoading) {
+                <div class="animate-pulse w-full">
+                    <div class="flex justify-between items-center flex-wrap gap-3">
+                        <div class="bg-base-300/80 rounded-2xl p-2 px-4 sm:px-6">
+                            <div class="h-7 w-48 bg-base-300 rounded-lg"></div>
+                        </div>
+                        <div class="h-5 w-28 bg-base-300 rounded-full"></div>
+                    </div>
+                    <div class="mt-6">
+                        <div class="flex items-center justify-between flex-wrap gap-3">
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <div class="h-6 w-24 bg-base-300 rounded-lg"></div>
+                                <div class="h-4 w-4 bg-base-300 rounded-full"></div>
+                                <div class="h-4 w-20 bg-base-300 rounded-lg"></div>
+                            </div>
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <div class="h-4 w-32 bg-base-300 rounded-lg"></div>
+                                <div class="h-3 w-3 bg-base-300 rounded-full"></div>
+                                <div class="h-4 w-36 bg-base-300 rounded-lg"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-end mt-6 flex-wrap gap-4">
+                        <div>
+                            <div class="h-14 w-28 bg-base-300 rounded-lg"></div>
+                            <div class="h-5 w-20 bg-base-300 rounded-lg mt-2"></div>
+                        </div>
+                        <div class="h-24 w-24 sm:h-36 sm:w-36 bg-base-300 rounded-full"></div>
+                    </div>
+
+                    <div class="border-t border-primary/20 pt-4 mt-4">
+                        <div class="flex justify-between items-center mb-2 flex-wrap gap-2">
+                            <div class="h-6 w-32 bg-base-300 rounded-lg"></div>
+                            <div class="h-4 w-36 bg-base-300 rounded-lg"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-start sm:justify-between gap-2 pt-4 flex-wrap">
+                        <div class="flex-shrink-0">
+                            <div class="h-10 w-28 bg-base-300 rounded-full"></div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <div class="h-10 w-28 bg-base-300 rounded-full"></div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <div class="h-10 w-28 bg-base-300 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+                } @else {
+                <div class="w-full">
+                    <div class="flex justify-between items-center flex-wrap gap-3">
+                        <div
+                            class="bg-base-300/80 backdrop-blur-sm shadow-lg border border-base-300 rounded-2xl p-2 px-4 sm:px-6 transition-theme duration-300">
+                            <h2 class="text-xl sm:text-2xl font-bold text-base-content break-words">{{ selectedCity }},
+                                {{ selectedCountry }}</h2>
+                        </div>
+                        <p class="text-base-content/60 text-sm">آب و هوای امروز</p>
+                    </div>
+
+                    <div class="mt-6">
+                        <div class="flex items-center justify-between flex-wrap gap-3">
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <p class="text-base-content/80 text-base sm:text-lg font-semibold">{{ currentDay }}</p>
+                                <span class="text-base-content/40 text-sm">/</span>
+                                <p class="text-base-content/60 text-xs sm:text-sm">{{ currentDayGregorian }}</p>
+                            </div>
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <p class="text-base-content/60 text-xs sm:text-sm">{{ currentDate }}</p>
+                                <span class="text-base-content/40 text-xs">|</span>
+                                <p class="text-base-content/50 text-xs sm:text-sm">{{ currentDateGregorian }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-end mt-6 flex-wrap gap-4">
+                        <div>
+                            <div class="text-5xl sm:text-7xl font-bold text-base-content">{{ tempMax }}°C</div>
+                            <div class="text-base-content/60 text-base sm:text-lg">/{{ tempMin }}°C</div>
+                        </div>
+                        <div class="text-6xl sm:text-8xl">
+                            <img [src]="'/icon/' + weatherIcon()" alt="{{ weatherCondition() }}"
+                                class="w-24 h-24 sm:w-36 sm:h-36 object-contain">
+                        </div>
+                    </div>
+
+                    <div
+                        class="border-t border-primary/20 pt-4 mt-4 flex justify-between items-center mb-2 flex-wrap gap-2">
+                        <p class="text-primary font-semibold text-base sm:text-lg">{{ weatherCondition() }}</p>
+                        <p class="text-base-content/60 text-xs sm:text-sm">مانند {{ feelsLike }}° احساس میشود.</p>
+                    </div>
+
+                    <div class="flex items-center justify-start sm:justify-between gap-2 pt-4 flex-wrap">
+                        <div class="badge badge-lg gap-2 p-3 sm:p-4 bg-base-200 flex-shrink-0">
+                            <span class="text-lg sm:text-xl">💨</span>
+                            <span style="direction: ltr;" class="text-sm sm:text-base">{{ windSpeed || 12 }} km/h</span>
+                        </div>
+                        <div class="badge badge-lg gap-2 p-3 sm:p-4 bg-base-200 flex-shrink-0">
+                            <span class="text-lg sm:text-xl">💧</span>
+                            <span class="text-sm sm:text-base">{{ humidity }}%</span>
+                        </div>
+                        <div class="badge badge-lg gap-2 p-3 sm:p-4 bg-base-200 flex-shrink-0">
+                            <span class="text-lg sm:text-xl">🕒</span>
+                            <span class="text-sm sm:text-base">{{ currentTime }}</span>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div
+                class="bg-base-200/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-base-300 transition-theme duration-300 overflow-x-hidden w-full">
+                <h3 class="text-base-content font-bold text-base sm:text-lg mb-4">شهرها (انتخاب کنید)</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center p-3 bg-base-300/50 rounded-xl hover:bg-primary/10 transition-all cursor-pointer flex-wrap gap-2"
+                        (click)="selectCityFromList('سیدنی', 'استرالیا', -33.8688, 151.2093)">
+                        <div>
+                            <p class="text-base-content font-semibold text-sm sm:text-base">استرالیا</p>
+                            <p class="text-base-content/60 text-xs sm:text-sm">سیدنی</p>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <span class="text-base-content/70 text-sm sm:text-base">آسمان صاف</span>
+                            <span class="text-xl sm:text-2xl">☀️</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-base-300/50 rounded-xl hover:bg-primary/10 transition-all cursor-pointer flex-wrap gap-2"
+                        (click)="selectCityFromList('توکیو', 'ژاپن', 35.6762, 139.6503)">
+                        <div>
+                            <p class="text-base-content font-semibold text-sm sm:text-base">ژاپن</p>
+                            <p class="text-base-content/60 text-xs sm:text-sm">توکیو</p>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <span class="text-base-content/70 text-sm sm:text-base">نیمه ابری</span>
+                            <span class="text-xl sm:text-2xl">⛅</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-base-300/50 rounded-xl hover:bg-primary/10 transition-all cursor-pointer flex-wrap gap-2"
+                        (click)="selectCityFromList('لندن', 'بریتانیا', 51.5074, -0.1278)">
+                        <div>
+                            <p class="text-base-content font-semibold text-sm sm:text-base">بریتانیا</p>
+                            <p class="text-base-content/60 text-xs sm:text-sm">لندن</p>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <span class="text-base-content/70 text-sm sm:text-base">ابری</span>
+                            <span class="text-xl sm:text-2xl">☁️</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4 mb-4">
+            <div
+                class="lg:col-span-2 bg-base-200/50 backdrop-blur-sm rounded-2xl p-6 border border-base-300 transition-theme duration-300 overflow-x-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-base-content font-bold text-lg flex items-center gap-2">
+                        <span>📅</span> پیش‌بینی 5 روزه
+                    </h3>
+                    <div class="text-xs text-base-content/40 bg-primary/10 px-3 py-1 rounded-full">
+                        {{ forecastDays.length }} روز آینده
+                    </div>
+                </div>
+
+                <div *ngIf="forecastDays.length === 0" class="text-center py-12 text-base-content/50">
+                    <div class="animate-pulse">⏳ در حال دریافت اطلاعات...</div>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-3"
+                    *ngIf="forecastDays.length > 0">
+                    <div *ngFor="let day of forecastDays.slice(0,10)"
+                        class="bg-base-100 rounded-xl p-3 text-center border border-base-300 hover:border-primary/50 hover:shadow-md transition-all duration-200 group">
+
+                        <div class="text-sm font-bold text-base-content group-hover:text-primary transition-colors">
+                            {{ getDayName(day.date) }}
+                        </div>
+
+                        <div class="my-2">
+                            <img class="w-10 h-10 mx-auto object-contain group-hover:scale-110 transition-transform"
+                                [src]="'/icon/' + getWeatherByCode(day.weatherCode).icon" [alt]="day.weatherLabel">
+                        </div>
+
+                        <div class="flex justify-center gap-2 text-sm">
+                            <span class="font-bold text-base-content">{{ day.maxTemp }}°</span>
+                            <span class="text-base-content/40">{{ day.minTemp }}°</span>
+                        </div>
+
+                        <div class="text-xs text-base-content/50 mt-1 truncate hidden sm:block">
+                            {{ day.weatherLabel }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="space-y-4">
+                <div
+                    class="bg-base-200/50 backdrop-blur-sm rounded-2xl p-5 border border-base-300 transition-theme duration-300">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-base-content/60 text-sm">رطوبت</p>
+                            <p class="text-3xl font-bold text-base-content mt-2">{{humidity}} <span
+                                    class="text-lg">%</span></p>
+                            <p class="text-base-content/50 text-sm mt-1">رطوبت مطلوب است.</p>
+                        </div>
+                        <div class="text-3xl">💧</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div
+                        class="bg-base-200/50 backdrop-blur-sm rounded-2xl p-5 border border-base-300 transition-theme duration-300">
+                        <div class="text-center">
+                            <div class="text-3xl mb-2">🌅</div>
+                            <p class="text-base-content/60 text-sm">طلوع خورشید</p>
+                            <p class="text-base-content font-bold text-lg">4:50 AM</p>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-base-200/50 backdrop-blur-sm rounded-2xl p-5 border border-base-300 transition-theme duration-300">
+                        <div class="text-center">
+                            <div class="text-3xl mb-2">🌇</div>
+                            <p class="text-base-content/60 text-sm">غروب خورشید</p>
+                            <p class="text-base-content font-bold text-lg">6:45 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 gap-6 px-4">
+            <div
+                class="lg:col-span-3 bg-base-200/50 backdrop-blur-sm rounded-2xl p-6 border border-base-300 transition-theme duration-300 overflow-x-auto mt-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-base-content font-bold text-lg flex items-center gap-2">
+                        <span>📈</span> نمودار ساعتی دما
+                    </h3>
+                    <div class="text-xs text-base-content/40 bg-primary/10 px-3 py-1 rounded-full">
+                        ۲۴ ساعت آینده
+                    </div>
+                </div>
+                <div id="hourly-temp-chart" style="height: 400px; min-width: 300px;"></div>
+            </div>
+        </div>
+    </div>
