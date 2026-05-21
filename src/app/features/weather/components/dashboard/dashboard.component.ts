@@ -47,7 +47,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   currentTime: string = '';
   isDay = 0
   searchFocused = false
-
+  dailyForecast: any = null;
+  forecastDays: any[] = [];
+  
   private weatherCode = signal<number | null>(null);
 
   weatherCondition = computed(() => {
@@ -133,7 +135,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.findWeather();
 
   }
-
 
   findWeather() {
     if (!this.latitude || !this.longitude) {
@@ -234,13 +235,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-
-
-
-
-  dailyForecast: any = null;
-  forecastDays: any[] = [];
-
   loadDailyForecast() {
     this.weatherService.findDailyForecast(this.latitude, this.longitude, 5).subscribe({
       next: (data) => {
@@ -257,17 +251,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
-
-
-
-
-
-
-
-
-
-
 
   initHourlyChart() {
     if (typeof Highcharts === 'undefined') {
