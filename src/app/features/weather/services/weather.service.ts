@@ -41,7 +41,7 @@ export class WeatherService {
 
     return this.http.get<SearchResponse>(this.baseUrl + 'search', { params });
   }
-// detect language
+  // detect language
   smartSearch(name: string, count: number = 5): Observable<SearchResponse> {
     const isPersian = /[\u0600-\u06FF]/.test(name);
     const language = isPersian ? 'fa' : 'en';
@@ -49,8 +49,7 @@ export class WeatherService {
     return this.searchCity(name, count, language);
   }
 
-
- findWeather(latitude: number, longitude: number): Observable<any> {
+  findWeather(latitude: number, longitude: number): Observable<any> {
     const params = {
       latitude: latitude.toString(),
       longitude: longitude.toString(),
@@ -59,5 +58,27 @@ export class WeatherService {
     };
     return this.http.get<any>('https://weather.arusha.dev/v1/forecast', { params });
   }
-  
+
+  findDailyForecast(latitude: number, longitude: number, days: number = 7): Observable<any> {
+    const params = {
+      latitude: latitude.toString(),
+      longitude: longitude.toString(),
+      daily: 'temperature_2m_max,temperature_2m_min,weather_code',
+      forecast_days: days.toString(),
+      timezone: 'auto'
+    };
+
+    return this.http.get<any>('https://weather.arusha.dev/v1/forecast', { params });
+  }
+
+  findHourlyForecast(latitude: number, longitude: number): Observable<any> {
+  const params = {
+    latitude: latitude.toString(),
+    longitude: longitude.toString(),
+    hourly: 'temperature_2m',
+    forecast_days: '1',
+    timezone: 'auto'
+  };
+  return this.http.get<any>('https://weather.arusha.dev/v1/forecast', { params });
+}
 }
